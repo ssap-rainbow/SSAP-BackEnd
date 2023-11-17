@@ -1,0 +1,178 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: backend
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_1add9cf40f5f
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: TZ
+              value: Asia/Seoul
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SPRING_DATASOURCE_URL
+            - name: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SPRING_DATASOURCE_DRIVER_CLASS_NAME
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+            # AWS 환경 변수 수정
+            # - name: AWS_S3_BUCKET
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: app-config
+            #       key: AWS_S3_BUCKET
+            # - name: AWS_REGION
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: app-config
+            #       key: AWS_REGION
+            # - name: AWS_ACCESS_KEY_ID
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: aws-credentials
+            #       key: AWS_ACCESS_KEY_ID
+            # - name: AWS_SECRET_ACCESS_KEY
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: aws-credentials
+            #       key: AWS_SECRET_ACCESS_KEY
+            # 프록시 환경 변수 추가
+            - name: PROXY_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: PROXY_HOST
+            - name: PROXY_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: PROXY_PORT        
+            # Logging 환경 변수 추가
+            - name: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB
+            - name: SPRINGDOC_SWAGGER_UI_PATH
+            # # Swagger 환경 변수 추가
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SPRINGDOC_SWAGGER_UI_PATH
+            - name: SPRINGDOC_API_DOCS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SPRINGDOC_API_DOCS_PATH    
+            # 카카오 환경 변수 추가
+            - name: KAKAO_REDIRECT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: KAKAO_REDIRECT_URL
+            - name: KAKAO_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: kakao-credentials
+                  key: KAKAO_CLIENT_SECRET
+            - name: KAKAO_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: kakao-credentials
+                  key: KAKAO_CLIENT_ID  
+            - name: KAKAO_TOKEN_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: kakao.token-uri
+            - name: KAKAO_USER_INFO_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: kakao.user-info-uri
+            - name: KAKAO_TOKEN_INFO_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: kakao.token.info.url    
+            - name: KAKAO_API_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: kakao.api.base-url
+            - name: SPRING_MVC_STATIC_PATH_PATTERN
+              value: "/resources/**"
+            - name: SPRING_THYMELEAF_CACHE
+              value: "false"  
+            - name: SPRING_JPA_HIBERNATE_DDL_AUTO
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SPRING_JPA_HIBERNATE_DDL_AUTO    
+            # - name: LOGGING_LEVEL_ROOT
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: app-config
+            #       key: logging.level.root                  
+            # - name: LOGGING_LEVEL_SSAP_SSAP
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: app-config
+            #       key: logging.level.ssap.ssap                
+          resources:
+            requests:
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /api/home
+              port: 8080
+      tolerations:
+        - key: "node-role.dkosv3.9rum.cc/lb"
+          operator: "Equal"
+          value: "true"
+          effect: "NoSchedule"
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  selector:
+    app: backend
+  ports:
+    - port: 8080
+      targetPort: 8080

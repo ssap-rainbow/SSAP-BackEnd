@@ -1,0 +1,13 @@
+namespace: krampoline
+resources:
+  - mariadb.yaml
+  - backend.yaml
+  - frontend.yaml
+  - nginx.yaml
+configMapGenerator:
+  - name: nginx
+    files:
+      - configs/default.conf
+  - name: init-db
+    files:
+      - configs/init.sql
