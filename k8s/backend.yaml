@@ -151,7 +151,7 @@ spec:
               memory: 1Gi
           readinessProbe:
             httpGet:
-              path: /api/home
+              path: /api/test
               port: 8080
       tolerations:
         - key: "node-role.dkosv3.9rum.cc/lb"
