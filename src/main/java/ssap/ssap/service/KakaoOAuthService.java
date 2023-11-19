@@ -63,28 +63,51 @@ public class KakaoOAuthService implements OAuthService {
     public LoginResponseDto kakaoLogin(String provider, String code, HttpServletResponse response) {
         OAuthDTO oauthInfo = requestAccessToken(code);
 
-        OAuthDTO userInfo = fetchUserInfo(oauthInfo.getAccessToken());
+        try {
+            OAuthDTO userInfo = fetchUserInfo(oauthInfo.getAccessToken());
 
-        LoginResponseDto loginResponse = new LoginResponseDto();
-        //TODO: 나중에 DB 연동을 통해 기존 회원 여부에 따라 로그인 성공 여부 설정하도록 수정 필요
-        loginResponse.setLoginSuccess(true);
+            LoginResponseDto loginResponse = new LoginResponseDto();
+            // 로그인 성공 여부 판단 로직
+            boolean loginSuccess = isLoginSuccessful(userInfo);
 
-        Account account = new Account();
-        account.setUserName(userInfo.getUserName());
-        account.setUserEmail(userInfo.getUserEmail());
-        loginResponse.setAccount(account);
+            if (loginSuccess) {
+                // 사용자 정보 저장
+                User user = saveOrUpdateUser(userInfo);
 
-        loginResponse.setAccessToken(oauthInfo.getAccessToken());
+                Account account = new Account();
+                account.setUserName(user.getName());
+                account.setUserEmail(user.getEmail());
+                loginResponse.setAccount(account);
+                loginResponse.setLoginSuccess(true);
 
-        Cookie refreshTokenCookie = new Cookie("refreshToken", oauthInfo.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/");
-        response.addCookie(refreshTokenCookie);
+                log.info("사용자 {}가 성공적으로 로그인했습니다.", user.getName());
 
-        // 토큰 정보를 LoginResponseDto에 설정
-        loginResponse.setAccessToken(oauthInfo.getAccessToken());
+                loginResponse.setAccessToken(oauthInfo.getAccessToken());
 
-        return loginResponse;
+                Cookie refreshTokenCookie = new Cookie("refreshToken", oauthInfo.getRefreshToken());
+                refreshTokenCookie.setHttpOnly(true);
+                refreshTokenCookie.setPath("/");
+                response.addCookie(refreshTokenCookie);
+
+                // 토큰 정보를 LoginResponseDto에 설정
+                loginResponse.setAccessToken(oauthInfo.getAccessToken());
+
+                return loginResponse;
+            } else {
+                loginResponse.setLoginSuccess(false);
+
+                log.error("로그인에 실패했습니다.");
+
+                return loginResponse;
+            }
+        } catch (Exception e) {
+            log.error("로그인 중 오류 발생: {}", e.getMessage());
+
+            LoginResponseDto errorResponse = new LoginResponseDto();
+            errorResponse.setLoginSuccess(false);
+
+            return errorResponse;
+        }
     }
 
     private User mapOAuthDTOToUserEntity(OAuthDTO oauthInfo) {
@@ -94,6 +117,12 @@ public class KakaoOAuthService implements OAuthService {
         user.setEmail(oauthInfo.getUserEmail());
 
         return user;
+    }
+
+    private boolean isLoginSuccessful(OAuthDTO userInfo) {
+        return userInfo != null &&
+                !userInfo.getUserName().isEmpty() &&
+                !userInfo.getUserEmail().isEmpty();
     }
 
     @Transactional
