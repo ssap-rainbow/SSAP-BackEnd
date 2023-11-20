@@ -77,6 +77,9 @@ public class KakaoOAuthService implements OAuthService {
                 Account account = new Account();
                 account.setUserName(user.getName());
                 account.setUserEmail(user.getEmail());
+                account.setGender(user.getGender());
+                account.setBirthdate(user.getBirthdate());
+                account.setAgeRange(user.getAgeRange());
                 loginResponse.setAccount(account);
                 loginResponse.setLoginSuccess(true);
 
@@ -115,6 +118,10 @@ public class KakaoOAuthService implements OAuthService {
         user.setProviderId(oauthInfo.getProviderId());
         user.setName(oauthInfo.getUserName());
         user.setEmail(oauthInfo.getUserEmail());
+        user.setGender(oauthInfo.getGender());
+        user.setBirthdate(oauthInfo.getBirthdate());
+        user.setAgeRange(oauthInfo.getAgeRange());
+
 
         return user;
     }
@@ -136,10 +143,6 @@ public class KakaoOAuthService implements OAuthService {
                 return existingUserOpt.get();
             } else {
                 User newUser = mapOAuthDTOToUserEntity(oauthInfo);
-
-                newUser.setProviderId(oauthInfo.getProviderId());
-                newUser.setName(oauthInfo.getUserName());
-                newUser.setEmail(oauthInfo.getUserEmail());
 
                 return userRepository.save(newUser);
             }
@@ -194,12 +197,19 @@ public class KakaoOAuthService implements OAuthService {
         JSONObject jsonObj = new JSONObject(response.getBody());
         JSONObject account = jsonObj.getJSONObject("kakao_account");
 
+        String gender = account.optString("gender");
+        String birthdate = account.optString("birthday");
+        String ageRange = account.optString("age_range");
+
         OAuthDTO oauthInfo = new OAuthDTO();
         oauthInfo.setProvider("kakao");
         oauthInfo.setProviderId(String.valueOf(jsonObj.getLong("id")));
         oauthInfo.setUserName(account.optJSONObject("profile").optString("nickname"));
         oauthInfo.setUserEmail(account.optString("email"));
         oauthInfo.setAccessToken(accessToken);
+        oauthInfo.setGender(gender);
+        oauthInfo.setBirthdate(birthdate);
+        oauthInfo.setAgeRange(ageRange);
 
         return oauthInfo;
     }

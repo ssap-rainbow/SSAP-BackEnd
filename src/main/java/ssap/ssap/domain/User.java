@@ -22,4 +22,13 @@ public class User {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "gender", nullable = true)
+    private String gender;
+
+    @Column(name = "birthdate", nullable = true)
+    private String birthdate;
+
+    @Column(name = "ageRange", nullable = true)
+    private String ageRange;
+
 }

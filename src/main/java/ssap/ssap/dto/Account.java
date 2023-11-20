@@ -8,4 +8,7 @@ import lombok.Setter;
 public class Account {
     private String userName;
     private String userEmail;
+    private String gender;
+    private String birthdate;
+    private String ageRange;
 }
