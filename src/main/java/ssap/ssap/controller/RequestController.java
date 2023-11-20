@@ -19,6 +19,7 @@ import ssap.ssap.service.TaskService;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = "*")
 @Tag(name = "심부름 요청서 작성 API", description = "Swagger 테스트용 심부름 요청서 작성 API")
 @Slf4j
 @RestController
