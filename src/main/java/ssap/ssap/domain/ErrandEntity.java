@@ -19,10 +19,10 @@ public class ErrandEntity {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "creation_time", nullable = false)
-    private LocalDateTime creationTime;
+    @Column
+    private LocalDateTime auctionStartTime;
 
-    @Column(name = "auction_end_time", nullable = false)
+    @Column
     private LocalDateTime auctionEndTime;
 
     @OneToOne(mappedBy = "errand", cascade = CascadeType.ALL, fetch = FetchType.EAGER)

@@ -29,7 +29,7 @@ public class ErrandService {
         dto.setTaskId(errand.getId());
         dto.setTitle(errand.getTitle());
         dto.setDescription(errand.getDescription());
-        dto.setCreationTime(errand.getCreationTime());
+        dto.setCreationTime(errand.getAuctionStartTime());
         dto.setAuctionEndTime(errand.getAuctionEndTime());
         if (errand.getAttachment() != null) {
             dto.setThumbnailUrl(errand.getAttachment().getFileData());
