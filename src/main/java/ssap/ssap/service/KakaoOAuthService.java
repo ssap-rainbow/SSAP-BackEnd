@@ -121,6 +121,7 @@ public class KakaoOAuthService implements OAuthService {
         user.setGender(oauthInfo.getGender());
         user.setBirthdate(oauthInfo.getBirthdate());
         user.setAgeRange(oauthInfo.getAgeRange());
+        user.setProfileImageUrl(oauthInfo.getProfileImageUrl());
 
 
         return user;
@@ -200,6 +201,8 @@ public class KakaoOAuthService implements OAuthService {
         String gender = account.optString("gender");
         String birthdate = account.optString("birthday");
         String ageRange = account.optString("age_range");
+        String profileImageUrl = account.optJSONObject("profile").optString("thumbnail_image_url");
+
 
         OAuthDTO oauthInfo = new OAuthDTO();
         oauthInfo.setProvider("kakao");
@@ -210,6 +213,7 @@ public class KakaoOAuthService implements OAuthService {
         oauthInfo.setGender(gender);
         oauthInfo.setBirthdate(birthdate);
         oauthInfo.setAgeRange(ageRange);
+        oauthInfo.setProfileImageUrl(profileImageUrl);
 
         return oauthInfo;
     }

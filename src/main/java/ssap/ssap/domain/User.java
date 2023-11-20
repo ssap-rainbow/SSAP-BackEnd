@@ -31,4 +31,7 @@ public class User {
     @Column(name = "ageRange", nullable = true)
     private String ageRange;
 
+    @Column(name = "profileImageUrl", nullable = true)
+    private String profileImageUrl;
+
 }
