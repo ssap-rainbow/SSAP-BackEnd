@@ -19,7 +19,6 @@ import ssap.ssap.service.TaskService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "*")
 @Tag(name = "심부름 요청서 작성 API", description = "Swagger 테스트용 심부름 요청서 작성 API")
 @Slf4j
 @RestController
@@ -34,7 +33,8 @@ public class RequestController {
     @PostMapping("/request")
     public ResponseEntity<?> createErrandRequestForm(
             @RequestHeader("Authorization") String authorizationHeader,
-            @Validated @RequestBody TaskRequestDto.CreateForm request, BindingResult bindingResult
+            @Validated @ModelAttribute TaskRequestDto.CreateForm request, BindingResult bindingResult
+
     ) {
         if(bindingResult.hasErrors()) {
             List<ErrorField> errors = bindingResult.getFieldErrors().stream()
@@ -47,12 +47,14 @@ public class RequestController {
         try {
             String accessToken = authorizationHeader.substring("Bearer ".length());
             boolean isValid = oauthService.isAccessTokenValid(accessToken);
-            if (isValid) {
-                Task task = taskService.createPost(request);
-                return ResponseEntity.status(HttpStatus.CREATED).body(new TaskRequestDto.CreateFormResponse("심부름 요청이 생성되었습니다.", task));
-            } else {
+            if (!isValid) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("액세스 토큰이 유효하지 않거나 만료되었습니다.");
             }
+
+            // 심부름 요청 생성
+            Task task = taskService.createPost(request);
+            return ResponseEntity.status(HttpStatus.CREATED).body(new TaskRequestDto.CreateFormResponse("심부름 요청이 생성되었습니다.", task));
+
         } catch (Exception e) {
             log.error("Exception e", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResponseDto.error("요청을 처리하는 중에 서버에서 오류가 발생했습니다.", ""));

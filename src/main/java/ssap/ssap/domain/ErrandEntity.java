@@ -25,6 +25,6 @@ public class ErrandEntity {
     @Column
     private LocalDateTime auctionEndTime;
 
-    @OneToOne(mappedBy = "errand", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private ThumbNailEntity attachment;
+    @OneToOne(mappedBy = "task", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private ThumbNailEntity attachment; // Task 필드를 참조하도록 수정
 }

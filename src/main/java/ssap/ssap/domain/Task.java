@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -81,4 +83,7 @@ public class Task {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "detailed_item_id")
     private DetailedItem detailedItem;
+
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
+    private List<ThumbNailEntity> thumbNails; // Task와 ThumbNailEntity의 연관 관계 설정
 }

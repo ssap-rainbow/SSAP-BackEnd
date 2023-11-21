@@ -6,7 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 import ssap.ssap.domain.Task;
+
+import java.util.List;
 
 @Schema(description = "심부름 요청성 작성 API 호출 DTO")
 public class TaskRequestDto {
@@ -89,6 +92,9 @@ public class TaskRequestDto {
 
         @Schema(description = "심부름 게시글 첨부 사진 파일 URL", example = "S3에 저장된 파일 URL")
         private String fileData;
+
+        @Schema(description = "업로드할 이미지 파일들", example = "[image1.jpg, image2.jpg]")
+        private List<MultipartFile> files; // 클라이언트로부터 업로드할 파일들을 받습니다.
     }
 
     @Getter

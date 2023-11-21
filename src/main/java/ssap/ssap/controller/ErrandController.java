@@ -8,13 +8,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ssap.ssap.dto.ErrandDTO;
 import ssap.ssap.service.ErrandService;
 import ssap.ssap.service.KakaoOAuthService;
 import ssap.ssap.service.OAuthService;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/errands")
 @Tag(name = "메인페이지 실시간 심부름 리스트", description = "메인페이지 실시간 심부름 리스트 관련 API")

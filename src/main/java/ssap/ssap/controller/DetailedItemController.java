@@ -14,7 +14,6 @@ import ssap.ssap.service.OAuthService;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
 @RestController
 @Slf4j
 @RequestMapping("/api/categories")
