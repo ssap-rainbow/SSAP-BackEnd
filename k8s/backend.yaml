@@ -43,26 +43,26 @@ spec:
                   name: db-credentials
                   key: password
             # AWS 환경 변수 수정
-            # - name: AWS_S3_BUCKET
-            #   valueFrom:
-            #     configMapKeyRef:
-            #       name: app-config
-            #       key: AWS_S3_BUCKET
-            # - name: AWS_REGION
-            #   valueFrom:
-            #     configMapKeyRef:
-            #       name: app-config
-            #       key: AWS_REGION
-            # - name: AWS_ACCESS_KEY_ID
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: aws-credentials
-            #       key: AWS_ACCESS_KEY_ID
-            # - name: AWS_SECRET_ACCESS_KEY
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: aws-credentials
-            #       key: AWS_SECRET_ACCESS_KEY
+            - name: AWS_S3_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: AWS_S3_BUCKET
+            - name: AWS_REGION
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: AWS_REGION
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: aws-credentials
+                  key: AWS_SECRET_ACCESS_KEY
             # 프록시 환경 변수 추가
             - name: PROXY_HOST
               valueFrom:
