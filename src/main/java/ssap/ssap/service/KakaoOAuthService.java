@@ -119,9 +119,28 @@ public class KakaoOAuthService implements OAuthService {
         user.setProviderId(oauthInfo.getProviderId());
         user.setName(oauthInfo.getUserName());
         user.setEmail(oauthInfo.getUserEmail());
-        user.setGender(oauthInfo.getGender());
+
+        String gender = oauthInfo.getGender();
+        if ("male".equals(gender)) {
+            user.setGender("남자");
+        } else if ("female".equals(gender)) {
+            user.setGender("여자");
+        } else {
+            user.setGender("기타"); // gender 값이 없거나 다른 경우
+        }
+
         user.setBirthdate(oauthInfo.getBirthdate());
-        user.setAgeRange(oauthInfo.getAgeRange());
+
+        String ageRange = oauthInfo.getAgeRange();
+        if (ageRange != null && ageRange.matches("\\d+~\\d+")) {
+            // 숫자~숫자 형식에 맞는 경우
+            String ageGroup = ageRange.split("~")[0] + "대";
+            user.setAgeRange(ageGroup);
+        } else {
+            // 형식에 맞지 않는 경우나 비어 있는 경우
+            user.setAgeRange("정보 없음"); // 또는 다른 적절한 기본값 사용
+        }
+
         user.setProfileImageUrl(oauthInfo.getProfileImageUrl());
 
 
