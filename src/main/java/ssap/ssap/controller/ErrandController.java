@@ -2,6 +2,7 @@ package ssap.ssap.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import ssap.ssap.service.KakaoOAuthService;
 import ssap.ssap.service.OAuthService;
 @CrossOrigin(origins = "*")
 @RestController
+@Slf4j
 @RequestMapping("/api/errands")
 @Tag(name = "메인페이지 실시간 심부름 리스트", description = "메인페이지 실시간 심부름 리스트 관련 API")
 public class ErrandController {
@@ -41,6 +43,7 @@ public class ErrandController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("토큰 검증 중 오류가 발생했습니다.");
             }
         }catch(Exception e){
+                log.error("서버 에러: ", e);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("토큰 검증 중 오류가 발생했습니다.");
             }
     }
