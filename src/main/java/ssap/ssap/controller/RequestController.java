@@ -35,7 +35,6 @@ public class RequestController {
     public ResponseEntity<?> createErrandRequestForm(
             @RequestHeader("Authorization") String authorizationHeader,
             @Validated @ModelAttribute TaskRequestDto.CreateForm request, BindingResult bindingResult
-
     ) {
         if(bindingResult.hasErrors()) {
             List<ErrorField> errors = bindingResult.getFieldErrors().stream()

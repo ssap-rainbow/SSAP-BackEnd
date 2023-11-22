@@ -40,8 +40,6 @@ public class TaskRequestDto {
         @NotBlank
         private String description;
 
-//        private String location;
-
         @Schema(description = "심부름을 수행할 장소의 도로명 주소", example = "서울특별시 동작구 상도로 369")
         @NotBlank
         private String roadAddress;
@@ -51,7 +49,6 @@ public class TaskRequestDto {
         private String jibunAddress;
 
         @Schema(description = "상세 주소", example = "중앙도서관")
-        @NotBlank
         private String detailedAddress;
 
         @Schema(description = "선호 성별", example = "없음")
@@ -63,12 +60,10 @@ public class TaskRequestDto {
         private Boolean immediateExecutionStatus;
 
         @Schema(description = "심부름 시작 시간", example = "2023-11-14 15:00:00", defaultValue = "지금 즉시")
-        @NotBlank
         private String startTime;
 
-        @Schema(description = "예상 소요 시간", example = "01:30")
-        @NotBlank
-        private String estimatedTime;
+        @Schema(description = "심부름 종료 시간", example = "2023-11-14 16:00:00")
+        private String endTime;
 
         @Schema(description = "심부름을 수행하기 위한 비용", example = "5000")
         @NotBlank
@@ -83,17 +78,12 @@ public class TaskRequestDto {
         private Boolean termsAgreed;
 
         @Schema(description = "경매의 시작 시간", example = "2023-11-12 13:00:00")
-        @NotNull
         private String auctionStartTime;
 
         @Schema(description = "경매의 종료 시간", example = "2023-11-14 13:00:00")
-        @NotNull
         private String auctionEndTime;
 
-        @Schema(description = "심부름 게시글 첨부 사진 파일 URL", example = "S3에 저장된 파일 URL")
-        private String fileData;
-
-        @Schema(description = "업로드할 이미지 파일들", example = "[image1.jpg, image2.jpg]")
+        @Schema(description = "요청 내용 첨부 이미지", example = "[image1.jpg, image2.jpg]")
         private List<MultipartFile> files; // 클라이언트로부터 업로드할 파일들을 받습니다.
     }
 

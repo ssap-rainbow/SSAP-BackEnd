@@ -27,7 +27,6 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final CategoryRepository categoryRepository;
     private final DetailedItemRepository detailedItemRepository;
-    private final ThumbNailRepository thumbNailRepository; // 수정됨
     private final TaskAttachmentRepository taskAttachmentRepository;
     private final UserRepository userRepository;
     private final S3Client s3Client; // S3Client 주입
@@ -78,8 +77,8 @@ public class TaskService {
         task.setPreferredGender(createForm.getPreferredGender());
         if (!createForm.getImmediateExecutionStatus()) {
             task.setStartTime(createForm.getStartTime());
+            task.setEndTime(createForm.getEndTime());
         }
-        task.setEndTime(createForm.getEstimatedTime());
         task.setFee(createForm.getFee());
         task.setAuctionStatus(createForm.getAuctionStatus());
         task.setTermsAgreed(createForm.getTermsAgreed());
@@ -91,11 +90,11 @@ public class TaskService {
 
         // 파일 업로드 처리
         if (createForm.getFiles() != null && !createForm.getFiles().isEmpty()) {
-            List<ThumbNailEntity> thumbNails = uploadFilesToS3(createForm.getFiles());
-            task.setThumbNails(thumbNails); // Task에 ThumbNailEntity 설정
-            for (ThumbNailEntity thumbNail : thumbNails) {
-                thumbNail.setTask(task); // ThumbNailEntity에 Task 연결
-                thumbNailRepository.save(thumbNail);
+            List<TaskAttachment> attachments = uploadFilesToS3(createForm.getFiles());
+            task.setAttachments(attachments); // Task에 TaskAttachment 설정
+            for (TaskAttachment attachment : attachments) {
+                attachment.setTask(task); // TaskAttachment에 Task 연결
+                taskAttachmentRepository.save(attachment);
             }
         }
 
@@ -106,15 +105,15 @@ public class TaskService {
 
         return task;
     }
-    private List<ThumbNailEntity> uploadFilesToS3(List<MultipartFile> files) {
-        List<ThumbNailEntity> thumbNails = new ArrayList<>();
+    private List<TaskAttachment> uploadFilesToS3(List<MultipartFile> files) {
+        List<TaskAttachment> attachments = new ArrayList<>();
         for (MultipartFile file : files) {
-            String fileUrl = uploadFileToS3(file); // 각 파일을 S3에 업로드하고 URL을 받아옵니다.
-            ThumbNailEntity thumbNail = new ThumbNailEntity();
-            thumbNail.setFileData(fileUrl); // 업로드된 파일 URL 설정
-            thumbNails.add(thumbNail);
+            String fileUrl = uploadFileToS3(file);
+            TaskAttachment attachment = new TaskAttachment();
+            attachment.setFileData(fileUrl);
+            attachments.add(attachment);
         }
-        return thumbNails;
+        return attachments;
     }
 
     private String uploadFileToS3(MultipartFile file) {
@@ -133,7 +132,7 @@ public class TaskService {
         }
     }
 
-    // 파일 이름 생성 로직 (예: UUID 사용)
+    // 파일 이름 생성 로직
     private String generateFileName(MultipartFile file) {
         return UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
     }

@@ -85,5 +85,5 @@ public class Task {
     private DetailedItem detailedItem;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
-    private List<ThumbNailEntity> thumbNails; // Task와 ThumbNailEntity의 연관 관계 설정
+    private List<TaskAttachment> attachments; // Task와 ThumbNailEntity의 연관 관계 설정
 }
