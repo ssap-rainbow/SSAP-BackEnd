@@ -4,11 +4,11 @@ import lombok.Data;
 
 @Data
 public class DetailedItemDTO {
-    private Long itemId;
-    private String detailedItemName;
+    private Long id;
+    private String categoryName;
 
-    public DetailedItemDTO(Long itemId, String detailedItemName) {
-        this.itemId = itemId;
-        this.detailedItemName = detailedItemName;
+    public DetailedItemDTO(Long id, String categoryName) {
+        this.id = id;
+        this.categoryName = categoryName;
     }
 }

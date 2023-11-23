@@ -14,7 +14,7 @@ public class ErrandResponseDto {
 
     private String startTime;
 
-    private String endTime;
+    private String auctionEndTime;
 
     private String fee;
 

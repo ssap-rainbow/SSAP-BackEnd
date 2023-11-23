@@ -32,7 +32,7 @@ public class ErrandService {
         dto.setDescription(task.getDescription());
         dto.setFee(task.getFee());
         dto.setStartTime(task.getStartTime());
-        dto.setEndTime(task.getEndTime());
+        dto.setAuctionEndTime(task.getAuctionEndTime());
         setFirstAttachmentFileData(task, dto);
         // '동'을 추출하는 로직
         String district = extractDistrictFromAddress(task.getJibunAddress());
