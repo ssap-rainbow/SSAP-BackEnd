@@ -32,7 +32,7 @@ public class ErrandController {
     @Operation(summary = "모든 심부름 조회", description = "페이징 처리된 심부름 목록을 조회")
     @GetMapping
     public ResponseEntity<?> getErrands(@ParameterObject Pageable pageable,
-                                                      @RequestHeader("Authorization") String authorizationHeader) {
+                                        @RequestHeader("Authorization") String authorizationHeader) {
         try {
             String accessToken = authorizationHeader.substring("Bearer ".length());
             boolean isValid = oAuthService.isAccessTokenValid(accessToken);
@@ -45,8 +45,8 @@ public class ErrandController {
             return ResponseEntity.ok(errands);
 
         }catch(Exception e){
-                log.error("토큰 검증 중 오류 발생: ", e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("토큰 검증 중 오류가 발생했습니다.");
-            }
+            log.error("Exception e", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("요청을 처리하는 중에 서버에서 오류가 발생했습니다.");
+        }
     }
 }

@@ -39,16 +39,17 @@ public class ErrandDetailedController {
             if (!isValid) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("액세스 토큰이 유효하지 않거나 만료되었습니다.");
             }
-                // 심부름 상세 페이지 조회
-                Map<String, Object> errandDetails = errandDetailedService.getErrandDetails(taskId);
-                return ResponseEntity.ok(errandDetails);
+
+            // 심부름 상세 페이지 조회
+            Map<String, Object> errandDetails = errandDetailedService.getErrandDetails(taskId);
+            return ResponseEntity.ok(errandDetails);
 
         }catch (EntityNotFoundException e){
             log.error("요청한 엔터티를 찾을 수 없습니다.", e);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("요청한 심부름 정보를 찾을 수 없습니다.");
         }catch (Exception e) {
-            log.error("토큰 검증 중 오류 발생: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("토큰 검증 중 오류가 발생했습니다.");
+            log.error("Exception e", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("요청을 처리하는 중에 서버에서 오류가 발생했습니다.");
         }
     }
 }

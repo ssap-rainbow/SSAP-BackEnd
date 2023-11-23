@@ -13,6 +13,7 @@ import ssap.ssap.service.DetailedItemService;
 import ssap.ssap.service.OAuthService;
 
 import java.util.List;
+
 @CrossOrigin(origins = "*")
 @RestController
 @Slf4j
@@ -40,15 +41,15 @@ public class DetailedItemController {
         try {
             String accessToken = authorizationHeader.substring("Bearer ".length());
             boolean isValid = oAuthService.isAccessTokenValid(accessToken);
-        if (isValid) {
-            List<DetailedItemDTO> detailItems = detailItemService.findAllDetailItemsByCategoryId(categoryId);
-            return ResponseEntity.ok(detailItems);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("액세스 토큰이 유효하지 않거나 만료되었습니다.");
-        }
-    } catch (Exception e) {
-            log.error("토큰 검증 중 오류 발생: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("토큰 검증 중 오류가 발생했습니다.");
+            if (isValid) {
+                List<DetailedItemDTO> detailItems = detailItemService.findAllDetailItemsByCategoryId(categoryId);
+                return ResponseEntity.ok(detailItems);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("액세스 토큰이 유효하지 않거나 만료되었습니다.");
+            }
+        } catch (Exception e) {
+            log.error("Exception e", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("요청을 처리하는 중에 서버에서 오류가 발생했습니다.");
         }
     }
 }

@@ -38,7 +38,7 @@ public class ErrandDetailedService {
 
         // 각 필드에 대한 정보를 Map에 저장
         details.put("categoryTag", task.getCategory().getCategoryName());
-        details.put("detail item", task.getDetailedItem().getDetailedItemName());
+        details.put("detailitem", task.getDetailedItem().getDetailedItemName());
         details.put("title", task.getTitle());
         details.put("description", task.getDescription());
         details.put("fee", task.getFee());
