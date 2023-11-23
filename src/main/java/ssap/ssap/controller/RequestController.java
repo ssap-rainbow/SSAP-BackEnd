@@ -30,13 +30,17 @@ public class RequestController {
     private final TaskService taskService;
     private final OAuthService oauthService;
 
-    @Operation(summary = "Errand_Post Create", description = "게시글 생성을 위한 심부름 요청서를 작성한다.")
     @PostMapping("/request")
     public ResponseEntity<?> createErrandRequestForm(
             @RequestHeader("Authorization") String authorizationHeader,
             @Validated @ModelAttribute TaskRequestDto.CreateForm request, BindingResult bindingResult
     ) {
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
+            // 오류 정보를 로그에 기록
+            bindingResult.getFieldErrors().forEach(fieldError -> {
+                log.error("검증 오류 - 필드: {}, 메시지: {}", fieldError.getField(), fieldError.getDefaultMessage());
+            });
+
             List<ErrorField> errors = bindingResult.getFieldErrors().stream()
                     .map(error -> new ErrorField(error.getField()))
                     .collect(Collectors.toList());
