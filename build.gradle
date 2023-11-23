@@ -31,6 +31,7 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation 'software.amazon.awssdk:s3:2.17.285'
 	implementation 'software.amazon.awssdk:apache-client:2.20.56'
+	implementation 'commons-validator:commons-validator:1.7'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
