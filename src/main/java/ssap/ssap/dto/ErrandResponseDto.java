@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class ErrandResponseDto {
+    private Long taskId;
+
     private String title;
 
     private String description;

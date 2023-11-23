@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ssap.ssap.domain.Task;
 import ssap.ssap.domain.TaskAttachment;
 import ssap.ssap.dto.ErrandResponseDto;
-import ssap.ssap.dto.TaskRequestDto;
 import ssap.ssap.repository.TaskAttachmentRepository;
 import ssap.ssap.repository.TaskRepository;
 
@@ -28,6 +27,7 @@ public class ErrandService {
     }
     private ErrandResponseDto convertToDto(Task task) {
         ErrandResponseDto dto = new ErrandResponseDto();
+        dto.setTaskId(task.getId());
         dto.setTitle(task.getTitle());
         dto.setDescription(task.getDescription());
         dto.setFee(task.getFee());

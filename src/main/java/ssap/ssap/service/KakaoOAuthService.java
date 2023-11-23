@@ -21,6 +21,7 @@ import ssap.ssap.dto.OAuthDTO;
 import org.json.JSONObject;
 import ssap.ssap.exception.CustomDuplicateKeyException;
 import ssap.ssap.exception.CustomServiceException;
+import ssap.ssap.exception.InvalidAccessTokenException;
 import ssap.ssap.repository.UserRepository;
 
 import java.util.Optional;
@@ -248,7 +249,7 @@ public class KakaoOAuthService implements OAuthService {
             return true; // 토큰이 유효한 경우
         } catch (HttpClientErrorException e) {
             log.error("액세스 토큰 유효성 검사 실패: {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "액세스 토큰이 유효하지 않거나 만료되었습니다.", e);
+            throw new InvalidAccessTokenException("액세스 토큰이 유효하지 않거나 만료되었습니다");
         }
     }
 

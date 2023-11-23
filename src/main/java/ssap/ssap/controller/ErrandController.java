@@ -11,9 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ssap.ssap.dto.ErrandResponseDto;
-import ssap.ssap.dto.TaskRequestDto;
 import ssap.ssap.service.ErrandService;
 import ssap.ssap.service.OAuthService;
+
 @CrossOrigin(origins = "*")
 @RestController
 @Slf4j
@@ -36,12 +36,14 @@ public class ErrandController {
         try {
             String accessToken = authorizationHeader.substring("Bearer ".length());
             boolean isValid = oAuthService.isAccessTokenValid(accessToken);
-            if (isValid) {
-                Page<ErrandResponseDto> errands = errandService.findAllErrands(pageable);
-                return ResponseEntity.ok(errands);
-            } else {
+            if (!isValid) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("액세스 토큰이 유효하지 않거나 만료되었습니다.");
             }
+
+            // 리스트 조회
+            Page<ErrandResponseDto> errands = errandService.findAllErrands(pageable);
+            return ResponseEntity.ok(errands);
+
         }catch(Exception e){
                 log.error("토큰 검증 중 오류 발생: ", e);
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("토큰 검증 중 오류가 발생했습니다.");
