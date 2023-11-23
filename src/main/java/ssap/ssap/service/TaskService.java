@@ -14,6 +14,7 @@ import ssap.ssap.dto.TaskRequestDto;
 import ssap.ssap.repository.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,7 @@ public class TaskService {
     private final DetailedItemRepository detailedItemRepository;
     private final TaskAttachmentRepository taskAttachmentRepository;
     private final UserRepository userRepository;
+    private final AuctionRepository auctionRepository;
     private final S3Client s3Client; // S3Client 주입
 
 //    private final UserTestRepository userTestRepository;
@@ -107,6 +109,14 @@ public class TaskService {
         task.setDetailedItem(detailedItem);
 
         taskRepository.save(task); // task 저장
+
+        if (task.getAuctionStatus()) {
+            Auction auction = new Auction();
+            auction.setTask(task);
+            auction.setStartTime(LocalDateTime.parse(createForm.getAuctionStartTime()));
+            auction.setEndTime(LocalDateTime.parse(createForm.getAuctionEndTime()));
+            auctionRepository.save(auction);
+        }
 
         return task;
     }
