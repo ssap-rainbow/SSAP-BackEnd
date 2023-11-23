@@ -118,8 +118,8 @@ public class TaskService {
 
             Auction auction = new Auction();
             auction.setTask(task);
-            auction.setStartTime(LocalDateTime.parse(createForm.getAuctionStartTime()));
-            auction.setEndTime(LocalDateTime.parse(createForm.getAuctionEndTime()));
+            auction.setStartTime(start);
+            auction.setEndTime(end);
             auctionRepository.save(auction);
         }
 
