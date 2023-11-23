@@ -49,18 +49,23 @@ public class TaskService {
         DetailedItem detailedItem =null;
 
         Optional<User> optionalUser = userRepository.findByEmail(createForm.getEmail());
+        log.info("User retrieval: email={}, present={}", createForm.getEmail(), optionalUser.isPresent());
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         }
 
         Optional<Category> optionalCategory = categoryRepository.findByCategoryName(createForm.getCategory());
+        log.info("Category retrieval: categoryName={}, present={}", createForm.getCategory(), optionalCategory.isPresent());
         if (optionalCategory.isPresent()) {
             category = optionalCategory.get();
             List<DetailedItem> detailedItems = detailedItemRepository.findByCategory_Id(category.getId());
+            log.info("DetailedItem retrieval: category={}, itemCount={}", category.getCategoryName(), detailedItems.size());
+
 
             Optional<DetailedItem> optionalDetailedItem = detailedItems.stream()
                     .filter(item -> item.getDetailedItemName().equals(createForm.getDetailedItem()))
                     .findAny();
+            log.info("Selected DetailedItem: detailedItemName={}, present={}", createForm.getDetailedItem(), optionalDetailedItem.isPresent());
 
             if (optionalDetailedItem.isPresent()) {
                 detailedItem = optionalDetailedItem.get();
