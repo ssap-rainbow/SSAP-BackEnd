@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Service
@@ -111,6 +112,10 @@ public class TaskService {
         taskRepository.save(task); // task 저장
 
         if (task.getAuctionStatus()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime start = LocalDateTime.parse(createForm.getAuctionStartTime(), formatter);
+            LocalDateTime end = LocalDateTime.parse(createForm.getAuctionEndTime(), formatter);
+
             Auction auction = new Auction();
             auction.setTask(task);
             auction.setStartTime(LocalDateTime.parse(createForm.getAuctionStartTime()));
