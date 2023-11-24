@@ -74,4 +74,9 @@ public class BidService {
 
         return "입찰이 성공적으로 완료되었습니다";
     }
+
+    public Bid findLatestBidByAuctionId(Long auctionId) {
+        return bidRepository.findTopByAuctionIdOrderByTimeDesc(auctionId);
+    }
+
 }

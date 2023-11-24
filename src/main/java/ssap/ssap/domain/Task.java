@@ -84,6 +84,10 @@ public class Task {
     @JoinColumn(name = "detailed_item_id")
     private DetailedItem detailedItem;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "auction_id")
+    private Auction auction;
+
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL)
     private List<TaskAttachment> attachments; // Task와 ThumbNailEntity의 연관 관계 설정
 }

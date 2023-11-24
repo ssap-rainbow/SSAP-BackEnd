@@ -53,6 +53,7 @@ public class ErrandDetailedService {
         details.put("ageRange", task.getUser().getAgeRange());
         details.put("gender", task.getUser().getGender());
         details.put("profileImageUrl", task.getUser().getProfileImageUrl());
+        details.put("auctionId",task.getAuction().getId());
 
         return details;
     }
