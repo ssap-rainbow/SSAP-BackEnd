@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ssap.ssap.dto.BidRequestDto;
+import ssap.ssap.dto.BidResponseDto;
 import ssap.ssap.exception.InvalidAccessTokenException;
 import ssap.ssap.service.BidService;
 import ssap.ssap.service.OAuthService;
@@ -78,7 +79,7 @@ public class BidController {
         }
 
         try {
-            var latestBid = bidService.findLatestBidByAuctionId(auctionId);
+            BidResponseDto latestBid = bidService.findLatestBidByAuctionId(auctionId);
             if (latestBid == null) {
                 return ResponseEntity.notFound().build();
             }
