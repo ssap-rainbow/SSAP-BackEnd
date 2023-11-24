@@ -3,8 +3,10 @@ package ssap.ssap.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ssap.ssap.domain.Auction;
 import ssap.ssap.domain.Task;
 import ssap.ssap.domain.User;
+import ssap.ssap.repository.AuctionRepository;
 import ssap.ssap.repository.TaskRepository;
 import ssap.ssap.repository.UserRepository;
 
@@ -17,10 +19,13 @@ public class ErrandDetailedService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
 
+    private final AuctionRepository auctionRepository;
+
     @Autowired
-    public ErrandDetailedService(TaskRepository taskRepository, UserRepository userRepository) {
+    public ErrandDetailedService(TaskRepository taskRepository, UserRepository userRepository, AuctionRepository auctionRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
+        this.auctionRepository = auctionRepository;
     }
 
     // taskId를 받아 심부름 상세 정보를 조회
@@ -32,6 +37,10 @@ public class ErrandDetailedService {
         // User 객체를 찾으며, 찾을 수 없다면 예외를 발생
         User requester = userRepository.findById(task.getUser().getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("userId 을 찾을 수 없습니다.: " + task.getUser().getUserId()));
+
+        // User 객체를 찾으며, 찾을 수 없다면 예외를 발생
+        Auction auction = auctionRepository.findById(task.getId())
+                .orElseThrow(() -> new EntityNotFoundException("auctionId 을 찾을 수 없습니다.: " + task.getId()));
 
         // 조회된 정보를 바탕으로 Map을 생성하여 반환
         Map<String, Object> details = new HashMap<>();
@@ -53,7 +62,7 @@ public class ErrandDetailedService {
         details.put("ageRange", task.getUser().getAgeRange());
         details.put("gender", task.getUser().getGender());
         details.put("profileImageUrl", task.getUser().getProfileImageUrl());
-        details.put("auctionId",task.getAuction().getId());
+        details.put("auctionId",auction.getId());
 
         return details;
     }
