@@ -19,7 +19,7 @@ spec:
           # 여러분의 image 주소를 입력해주세요.
           # image: krmp-d2hub-idock.9rum.cc/dev-test/repo_3ce402803bfd # - J
           # image: krmp-d2hub-idock.9rum.cc/dev-test/repo_b7faddfe123f
-          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_568f6745b4ff #- S
+          image: krmp-d2hub-idock.9rum.cc/dev-test/repo_2728e5fbeff8 #- S
           # env:
             # 카카오 환경 변수
             # - name: REACT_APP_REST_API_KEY
