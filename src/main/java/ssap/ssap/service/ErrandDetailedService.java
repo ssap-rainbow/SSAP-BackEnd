@@ -39,7 +39,7 @@ public class ErrandDetailedService {
                 .orElseThrow(() -> new EntityNotFoundException("userId 을 찾을 수 없습니다.: " + task.getUser().getUserId()));
 
         // User 객체를 찾으며, 찾을 수 없다면 예외를 발생
-        Auction auction = auctionRepository.findById(task.getId())
+        Auction auction = auctionRepository.findByTaskId(task.getId())
                 .orElseThrow(() -> new EntityNotFoundException("auctionId 을 찾을 수 없습니다.: " + task.getId()));
 
         // 조회된 정보를 바탕으로 Map을 생성하여 반환
