@@ -8,6 +8,7 @@ import ssap.ssap.repository.AuctionRepository;
 import ssap.ssap.repository.TaskRepository;
 import ssap.ssap.repository.UserRepository;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,4 +75,29 @@ public class ErrandListService {
         }
         return errandMap;
     }
+
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getFilteredErrands(String address) {
+        String district = extractDistrictFromAddress(address);
+        if (district == null) {
+            return Collections.emptyList(); // '동'을 찾지 못한 경우 빈 리스트 반환
+        }
+        List<Task> tasks = taskRepository.findByJibunAddressContaining(district);
+        return tasks.stream().map(this::convertTaskToMap).collect(Collectors.toList());
+    }
+
+    // 주소에서 '동'을 추출하는 메서드
+    public String extractDistrictFromAddress(String fullAddress) {
+        if(fullAddress == null || fullAddress.isEmpty()) {
+            return null;
+        }
+        String[] parts = fullAddress.split(" ");
+        for (int i = parts.length - 1; i >= 0; i--) {
+            if (parts[i].matches("\\d+.*")) {
+                return i > 0 ? parts[i - 1] : null;
+            }
+        }
+        return null; // '동'을 찾지 못한 경우
+    }
+
 }
