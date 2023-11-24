@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class BidRequestDto {
     private Long taskId;
-    private Long userId;
+    private String userEmail;
     private Integer bidAmount;
     private boolean termsAgreed;
     private Long auctionId;

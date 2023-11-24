@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ssap.ssap.domain.Auction;
 import ssap.ssap.domain.Bid;
 import ssap.ssap.domain.Task;
+import ssap.ssap.domain.User;
 import ssap.ssap.dto.BidRequestDto;
 import ssap.ssap.repository.AuctionRepository;
 import ssap.ssap.repository.BidRepository;
@@ -40,6 +41,10 @@ public class BidService {
                 .orElseThrow(() -> new EntityNotFoundException("심부름을 찾을 수 없습니다: " + bidRequest.getTaskId()));
         log.debug("심부름 조회 성공: {}", task);
 
+        User user = userRepository.findByEmail(bidRequest.getUserEmail())
+                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다: " + bidRequest.getUserEmail()));
+        log.debug("사용자 조회 성공: {}", user);
+
         // 경매 상태 및 입찰 가능 여부 검증
         Auction auction = auctionRepository.findById(bidRequest.getAuctionId())
                 .orElseThrow(() -> new EntityNotFoundException("경매를 찾을 수 없습니다: " + bidRequest.getAuctionId()));
@@ -58,8 +63,7 @@ public class BidService {
         // 입찰 처리
         Bid newBid = new Bid();
         newBid.setTask(task);
-        newBid.setUser(userRepository.findById(bidRequest.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("사용자를 찾을 수 없습니다: " + bidRequest.getUserId())));
+        newBid.setUser(user);
         newBid.setAmount(bidRequest.getBidAmount());
         newBid.setTime(LocalDateTime.now());
         newBid.setTermsAgreed(bidRequest.isTermsAgreed());

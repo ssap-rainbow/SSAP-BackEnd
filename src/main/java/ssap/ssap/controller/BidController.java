@@ -16,6 +16,7 @@ import ssap.ssap.exception.InvalidAccessTokenException;
 import ssap.ssap.service.BidService;
 import ssap.ssap.service.OAuthService;
 
+@CrossOrigin(origins = "*")
 @Tag(name = "입찰 API", description = "입찰 관련 API")
 @RestController
 @RequestMapping("/api/bids")

@@ -15,11 +15,11 @@ import ssap.ssap.repository.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Service
@@ -52,23 +52,18 @@ public class TaskService {
         DetailedItem detailedItem =null;
 
         Optional<User> optionalUser = userRepository.findByEmail(createForm.getEmail());
-        log.info("User retrieval: email={}, present={}", createForm.getEmail(), optionalUser.isPresent());
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         }
 
         Optional<Category> optionalCategory = categoryRepository.findByCategoryName(createForm.getCategory());
-        log.info("Category retrieval: categoryName={}, present={}", createForm.getCategory(), optionalCategory.isPresent());
         if (optionalCategory.isPresent()) {
             category = optionalCategory.get();
             List<DetailedItem> detailedItems = detailedItemRepository.findByCategory_Id(category.getId());
-            log.info("DetailedItem retrieval: category={}, itemCount={}", category.getCategoryName(), detailedItems.size());
-
 
             Optional<DetailedItem> optionalDetailedItem = detailedItems.stream()
                     .filter(item -> item.getDetailedItemName().equals(createForm.getDetailedItem()))
                     .findAny();
-            log.info("Selected DetailedItem: detailedItemName={}, present={}", createForm.getDetailedItem(), optionalDetailedItem.isPresent());
 
             if (optionalDetailedItem.isPresent()) {
                 detailedItem = optionalDetailedItem.get();
@@ -113,13 +108,13 @@ public class TaskService {
 
         if (task.getAuctionStatus()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime start = LocalDateTime.parse(createForm.getAuctionStartTime(), formatter);
-            LocalDateTime end = LocalDateTime.parse(createForm.getAuctionEndTime(), formatter);
+            LocalDateTime auctionStartTime = LocalDateTime.parse(createForm.getAuctionStartTime(), formatter);
+            LocalDateTime auctionEndTime = LocalDateTime.parse(createForm.getAuctionEndTime(), formatter);
 
             Auction auction = new Auction();
             auction.setTask(task);
-            auction.setStartTime(start);
-            auction.setEndTime(end);
+            auction.setStartTime(auctionStartTime);
+            auction.setEndTime(auctionEndTime);
             auctionRepository.save(auction);
         }
 
