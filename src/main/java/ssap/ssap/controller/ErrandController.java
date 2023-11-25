@@ -31,7 +31,8 @@ public class ErrandController {
 
     @Operation(summary = "모든 심부름 조회", description = "페이징 처리된 심부름 목록을 조회")
     @GetMapping
-    public ResponseEntity<?> getErrands(@ParameterObject Pageable pageable,
+    public ResponseEntity<?> getErrands(@RequestParam(required = false) String address,
+                                        @ParameterObject Pageable pageable,
                                         @RequestHeader("Authorization") String authorizationHeader) {
         try {
             String accessToken = authorizationHeader.substring("Bearer ".length());
@@ -41,7 +42,7 @@ public class ErrandController {
             }
 
             // 리스트 조회
-            Page<ErrandResponseDto> errands = errandService.findAllErrands(pageable);
+            Page<ErrandResponseDto> errands = errandService.getErrands(address, pageable);
             return ResponseEntity.ok(errands);
 
         }catch(Exception e){
