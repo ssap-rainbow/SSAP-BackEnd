@@ -70,17 +70,36 @@ public class ErrandService {
         return taskPage.map(this::convertToDto);
     }
     // 주소에서 '동'을 추출하는 메소드
+//    public String extractDistrictFromAddress(String fullAddress) {
+//        if(fullAddress == null || fullAddress.isEmpty()) {
+//            return null;
+//        }
+//        String[] parts = fullAddress.split(" ");
+//        for (int i = parts.length - 1; i >= 0; i--) {
+//            if (parts[i].matches("\\d+.*")) {
+//                return i > 0 ? parts[i - 1] : null;
+//            }
+//        }
+//        return null; // '동'을 찾지 못한 경우
+//    }
+
     public String extractDistrictFromAddress(String fullAddress) {
         if(fullAddress == null || fullAddress.isEmpty()) {
             return null;
         }
+
+        // 주소를 공백으로 분할
         String[] parts = fullAddress.split(" ");
-        for (int i = parts.length - 1; i >= 0; i--) {
-            if (parts[i].matches("\\d+.*")) {
-                return i > 0 ? parts[i - 1] : null;
+
+        // '구'를 포함하는 부분 찾기
+        for (String part : parts) {
+            if (part.endsWith("구")) {
+                return part;
             }
         }
-        return null; // '동'을 찾지 못한 경우
+
+        return null; // '구'를 찾지 못한 경우
     }
+
     // 기타 CRUD 메소드 작성해야함. 현재는 조회만 가능.
 }
