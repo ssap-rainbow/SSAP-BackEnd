@@ -1,18 +1,15 @@
 package ssap.ssap.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ssap.ssap.domain.*;
+import ssap.ssap.dto.ErrandListResponseDto;
 import ssap.ssap.repository.AuctionRepository;
 import ssap.ssap.repository.TaskRepository;
 import ssap.ssap.repository.UserRepository;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class ErrandListService {
@@ -29,75 +26,76 @@ public class ErrandListService {
     }
 
     @Transactional(readOnly = true)
-    public List<Map<String, Object>> getErrandsByCategory(Long categoryId) {
-        List<Task> tasks = taskRepository.findByCategoryId(categoryId);
-        return tasks.stream().map(this::convertTaskToMap).collect(Collectors.toList());
+    public Page<ErrandListResponseDto> getErrands(Long categoryId, String address, Pageable pageable) {
+        if (address != null && !address.isEmpty()) {
+            String district = extractDistrictFromAddress(address);
+            if (district != null) {
+                return taskRepository.findByCategoryIdAndJibunAddressContaining(categoryId, district, pageable)
+                        .map(this::convertToDto);
+            }
+        }
+        return categoryId != null
+                ? taskRepository.findByCategoryId(categoryId, pageable).map(this::convertToDto)
+                : taskRepository.findAll(pageable).map(this::convertToDto);
     }
 
-    private Map<String, Object> convertTaskToMap(Task task) {
-        Map<String, Object> errandMap = new HashMap<>();
+    private ErrandListResponseDto convertToDto(Task task) {
+        ErrandListResponseDto dto = new ErrandListResponseDto();
 
-        errandMap.put("taskId", task.getId());
-        errandMap.put("title", task.getTitle());
-        errandMap.put("fee", task.getFee());
-        errandMap.put("startTime", task.getStartTime());
-        errandMap.put("auctionEndTime", task.getAuctionEndTime());
-        errandMap.put("roadAddress", task.getRoadAddress());
-        errandMap.put("jibunAddress", task.getJibunAddress());
-        errandMap.put("detailedAddress", task.getDetailedAddress());
+        dto.setTaskId(task.getId());
+        dto.setTitle(task.getTitle());
+        dto.setDescription(task.getDescription()); // Task 객체에서 설명을 가져옵니다.
+        dto.setFee(task.getFee());
+        dto.setStartTime(task.getStartTime());
+        dto.setAuctionEndTime(task.getAuctionEndTime());
+        setFirstAttachmentFileData(task, dto);
 
-        // User 정보
         User user = task.getUser();
-        if (user != null) {
-            errandMap.put("userId", user.getUserId());
+        if (task.getUser() != null) {
+            dto.setUserId(user.getUserId());
+            dto.setUserName(user.getName());
         }
 
-        // Category 정보
         Category category = task.getCategory();
-        if (category != null) {
-            errandMap.put("categoryId", category.getId());
-            errandMap.put("categoryName", category.getCategoryName());
+        if (task.getCategory() != null) {
+            dto.setCategoryId(category.getId());
+            dto.setCategoryName(category.getCategoryName());
         }
 
-        // Auction 정보
         Auction auction = task.getAuction();
-        if (auction != null) {
-            errandMap.put("auctionId", auction.getId());
+        if (task.getAuction() != null) {
+            dto.setAuctionId(auction.getId());
         }
 
-        // TaskAttachment 정보 (첨부 파일 정보)
-        List<TaskAttachment> attachments = task.getAttachments();
-        if (attachments != null && !attachments.isEmpty()) {
-            // 첫 번째 첨부 파일 정보만 불러오기
-            TaskAttachment firstAttachment = attachments.get(0);
-            errandMap.put("firstAttachmentId", firstAttachment.getId());
-            errandMap.put("firstAttachmentFileData", firstAttachment.getFileData());
+        if (!task.getAttachments().isEmpty()) {
+            TaskAttachment firstAttachment = task.getAttachments().get(0);
+            dto.setFileData(firstAttachment.getFileData());
         }
-        return errandMap;
+
+        String district = extractDistrictFromAddress(task.getJibunAddress());
+        dto.setDistrict(district);
+
+        return dto;
     }
 
-    @Transactional(readOnly = true)
-    public List<Map<String, Object>> getFilteredErrands(String address) {
-        String district = extractDistrictFromAddress(address);
-        if (district == null) {
-            return Collections.emptyList(); // '동'을 찾지 못한 경우 빈 리스트 반환
+    private void setFirstAttachmentFileData(Task task, ErrandListResponseDto dto) {
+        if (!task.getAttachments().isEmpty()) {
+            TaskAttachment firstAttachment = task.getAttachments().get(0);
+            dto.setFileData(firstAttachment.getFileData());
         }
-        List<Task> tasks = taskRepository.findByJibunAddressContaining(district);
-        return tasks.stream().map(this::convertTaskToMap).collect(Collectors.toList());
     }
 
-    // 주소에서 '동'을 추출하는 메서드
-    public String extractDistrictFromAddress(String fullAddress) {
-        if(fullAddress == null || fullAddress.isEmpty()) {
+    // 주소에서 '구'를 추출하는 메서드
+    private String extractDistrictFromAddress(String fullAddress) {
+        if (fullAddress == null || fullAddress.isEmpty()) {
             return null;
         }
         String[] parts = fullAddress.split(" ");
-        for (int i = parts.length - 1; i >= 0; i--) {
-            if (parts[i].matches("\\d+.*")) {
-                return i > 0 ? parts[i - 1] : null;
+        for (String part : parts) {
+            if (part.endsWith("구")) {
+                return part;
             }
         }
-        return null; // '동'을 찾지 못한 경우
+        return null; // '구'를 찾지 못한 경우
     }
-
 }

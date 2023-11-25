@@ -4,15 +4,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ssap.ssap.dto.ErrandListResponseDto;
 import ssap.ssap.service.ErrandListService;
 import ssap.ssap.service.OAuthService;
-
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -32,7 +33,9 @@ public class ErrandListController {
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "심부름 리스트 상세 페이지 조회")
     public ResponseEntity<?> getErrandsByCategory(@PathVariable Long categoryId,
-                                              @RequestHeader("Authorization") String authorizationHeader) {
+                                                  @RequestParam(required = false) String address,
+                                                  @ParameterObject Pageable pageable,
+                                                  @RequestHeader("Authorization") String authorizationHeader) {
 
         try {
             String accessToken = authorizationHeader.substring("Bearer ".length());
@@ -41,7 +44,7 @@ public class ErrandListController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("액세스 토큰이 유효하지 않거나 만료되었습니다.");
             }
 
-            List<Map<String, Object>> errands = errandListService.getErrandsByCategory(categoryId);
+            Page<ErrandListResponseDto> errands = errandListService.getErrands(categoryId, address, pageable);
             return ResponseEntity.ok(errands);
 
         }catch (EntityNotFoundException e){
@@ -50,28 +53,6 @@ public class ErrandListController {
         }catch (Exception e) {
             log.error("Exception e", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("요청을 처리하는 중에 서버에서 오류가 발생했습니다.");
-        }
-    }
-
-    @GetMapping("/filtered")
-    @Operation(summary = "위치 기반 심부름 리스트 조회")
-    public ResponseEntity<?> getFilteredErrands(@RequestParam String address,
-                                                @RequestHeader("Authorization") String authorizationHeader) {
-        try {
-            String accessToken = authorizationHeader.substring("Bearer ".length());
-            if (!oAuthService.isAccessTokenValid(accessToken)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("액세스 토큰이 유효하지 않거나 만료되었습니다.");
-            }
-
-            List<Map<String, Object>> filteredErrands = errandListService.getFilteredErrands(address);
-            return ResponseEntity.ok(filteredErrands);
-
-        } catch (EntityNotFoundException e) {
-            log.error("Entity not found", e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("주소에 해당하는 심부름을 찾을 수 없습니다.");
-        } catch (Exception e) {
-            log.error("Exception occurred", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류가 발생했습니다.");
         }
     }
 }
