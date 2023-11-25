@@ -77,9 +77,15 @@ public class BidService {
     }
 
     public BidResponseDto findLatestBidByAuctionId(Long auctionId) {
+        log.debug("경매 ID에 따른 최신 입찰 찾기: 값 = {}, 타입 = {}", auctionId, auctionId.getClass().getSimpleName());
+
         Bid latestBid = bidRepository.findTopByAuctionIdOrderByTimeDesc(auctionId);
+
         if (latestBid == null) {
+            log.debug("경매 ID {}에 대한 최신 입찰 없음", auctionId);
             return null;
+        } else {
+            log.debug("경매 ID {}에 대한 최신 입찰 찾음: {}", auctionId, latestBid);
         }
 
         return new BidResponseDto(
