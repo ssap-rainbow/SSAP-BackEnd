@@ -130,7 +130,11 @@ spec:
             - name: SPRING_MVC_STATIC_PATH_PATTERN
               value: "/resources/**"
             - name: SPRING_THYMELEAF_CACHE
-              value: "false"  
+              value: "false"
+            - name: LOGGING_LEVEL_ROOT
+              value: "debug"
+            - name: LOGGING_LEVEL_SSAP_SSAP
+              value: "debug"
             - name: SPRING_JPA_HIBERNATE_DDL_AUTO
               valueFrom:
                 configMapKeyRef:
