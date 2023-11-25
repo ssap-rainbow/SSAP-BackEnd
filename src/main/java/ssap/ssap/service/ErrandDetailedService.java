@@ -40,7 +40,7 @@ public class ErrandDetailedService {
                 .orElseThrow(() -> new EntityNotFoundException("userId 을 찾을 수 없습니다.: " + task.getUser().getUserId()));
 
         // Auction 객체를 찾으며, 존재하지 않는 경우에 대한 처리를 추가
-        Optional<Auction> optionalAuction = auctionRepository.findByTaskId(task.getId());
+        Optional<Auction> auction = auctionRepository.findByTaskId(task.getId());
 
         // 조회된 정보를 바탕으로 Map을 생성하여 반환
         Map<String, Object> details = new HashMap<>();
@@ -62,11 +62,8 @@ public class ErrandDetailedService {
         details.put("ageRange", task.getUser().getAgeRange());
         details.put("gender", task.getUser().getGender());
         details.put("profileImageUrl", task.getUser().getProfileImageUrl());
-
-        // Auction 객체가 존재하는 경우에만 추가 정보를 Map에 저장
-        optionalAuction.ifPresent(auction -> {
-            details.put("auctionId", auction.getId());
-        });
+        // Auction 객체가 존재하는 경우 해당 ID를 저장, 존재하지 않는 경우 null 저장
+        details.put("auctionId", auction.map(Auction::getId).orElse(null));
 
         return details;
     }

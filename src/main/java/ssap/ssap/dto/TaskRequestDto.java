@@ -41,11 +41,11 @@ public class TaskRequestDto {
         private String description;
 
         @Schema(description = "심부름을 수행할 장소의 도로명 주소", example = "서울특별시 동작구 상도로 369")
-//        @NotBlank
+        @NotBlank
         private String roadAddress;
 
         @Schema(description = "심부름을 수행할 장소의 지번 주소", example = "서울특별시 동작구 상도동 511")
-//        @NotBlank
+        @NotBlank
         private String jibunAddress;
 
         @Schema(description = "상세 주소", example = "중앙도서관")
