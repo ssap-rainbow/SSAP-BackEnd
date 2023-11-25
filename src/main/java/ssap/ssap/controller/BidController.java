@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import ssap.ssap.service.BidService;
 import ssap.ssap.service.OAuthService;
 
 @CrossOrigin(origins = "*")
+@Slf4j
 @Tag(name = "입찰 API", description = "입찰 관련 API")
 @RestController
 @RequestMapping("/api/bids")
@@ -72,6 +74,8 @@ public class BidController {
             @RequestHeader("Authorization") String authorizationHeader,
             @Parameter(name = "auctionId", description = "경매 ID", required = true, in = ParameterIn.PATH)
             @PathVariable Long auctionId) {
+
+        log.debug("경매 ID에 따른 최신 입찰 찾기: 값 = {}, 타입 = {}", auctionId, auctionId.getClass().getSimpleName());
 
         String accessToken = authorizationHeader.substring("Bearer ".length());
         if (!oauthService.isAccessTokenValid(accessToken)) {
