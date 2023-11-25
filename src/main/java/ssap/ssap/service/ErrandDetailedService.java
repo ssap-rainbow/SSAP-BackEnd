@@ -12,6 +12,7 @@ import ssap.ssap.repository.UserRepository;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ErrandDetailedService {
@@ -38,9 +39,8 @@ public class ErrandDetailedService {
         User requester = userRepository.findById(task.getUser().getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("userId 을 찾을 수 없습니다.: " + task.getUser().getUserId()));
 
-        // User 객체를 찾으며, 찾을 수 없다면 예외를 발생
-        Auction auction = auctionRepository.findByTaskId(task.getId())
-                .orElseThrow(() -> new EntityNotFoundException("auctionId 을 찾을 수 없습니다.: " + task.getId()));
+        // Auction 객체를 찾으며, 존재하지 않는 경우에 대한 처리를 추가
+        Optional<Auction> optionalAuction = auctionRepository.findByTaskId(task.getId());
 
         // 조회된 정보를 바탕으로 Map을 생성하여 반환
         Map<String, Object> details = new HashMap<>();
@@ -62,7 +62,11 @@ public class ErrandDetailedService {
         details.put("ageRange", task.getUser().getAgeRange());
         details.put("gender", task.getUser().getGender());
         details.put("profileImageUrl", task.getUser().getProfileImageUrl());
-        details.put("auctionId",auction.getId());
+
+        // Auction 객체가 존재하는 경우에만 추가 정보를 Map에 저장
+        optionalAuction.ifPresent(auction -> {
+            details.put("auctionId", auction.getId());
+        });
 
         return details;
     }
