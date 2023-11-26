@@ -57,7 +57,16 @@ public class BidService {
 
         // 최저 입찰 금액 검증
         Integer currentLowestBid = bidRepository.findLowestBidAmountByAuctionId(auction.getId());
-        if (currentLowestBid != null && bidRequest.getBidAmount() >= currentLowestBid) {
+        Integer taskFee = Integer.valueOf(task.getFee());
+
+        if (currentLowestBid != null) {
+            if (bidRequest.getBidAmount() >= currentLowestBid) {
+                log.error("입찰 실패: 입찰 금액 ({})은 현재 최저 입찰 금액 ({})보다 낮아야 함", bidRequest.getBidAmount(), currentLowestBid);
+                throw new IllegalArgumentException("입찰 금액은 현재 최저 입찰 금액보다 낮아야 합니다.");
+            }
+        } else if (bidRequest.getBidAmount() >= taskFee) {
+            // 최초 입찰인 경우, 입찰 금액이 Task의 fee보다 낮아야 함
+            log.error("입찰 실패: 입찰 금액 ({})은 Task의 fee 금액 ({})보다 낮아야 함", bidRequest.getBidAmount(), taskFee);
             throw new IllegalArgumentException("입찰 금액은 현재 최저 입찰 금액보다 낮아야 합니다.");
         }
 
