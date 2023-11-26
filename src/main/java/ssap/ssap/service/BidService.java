@@ -78,22 +78,30 @@ public class BidService {
 
     public BidResponseDto findLatestBidByAuctionId(Long auctionId) {
         log.debug("경매 ID에 따른 최신 입찰 찾기: 값 = {}, 타입 = {}", auctionId, auctionId.getClass().getSimpleName());
-
         Bid latestBid = bidRepository.findTopByAuctionIdOrderByTimeDesc(auctionId);
 
-        if (latestBid == null) {
-            log.debug("경매 ID {}에 대한 최신 입찰 없음", auctionId);
-            return null;
+        if (latestBid != null) {
+            return new BidResponseDto(
+                    latestBid.getId(),
+                    latestBid.getAmount(),
+                    latestBid.getUser().getEmail(),
+                    latestBid.getUser().getName(),
+                    latestBid.getTime()
+            );
         } else {
-            log.debug("경매 ID {}에 대한 최신 입찰 찾음: {}", auctionId, latestBid);
-        }
+            // latestBid가 null인 경우, 관련 Auction을 찾아서 해당 Task의 fee 값을 리턴
+            Auction auction = auctionRepository.findById(auctionId)
+                    .orElseThrow(() -> new EntityNotFoundException("경매를 찾을 수 없습니다: " + auctionId));
+            Task task = auction.getTask();
+            Integer fee = Integer.valueOf(task.getFee());
 
-        return new BidResponseDto(
-                latestBid.getId(),
-                latestBid.getAmount(),
-                latestBid.getUser().getEmail(),
-                latestBid.getUser().getName(),
-                latestBid.getTime()
-        );
+            return new BidResponseDto(
+                    null,
+                    fee,
+                    null,
+                    null,
+                    null
+            );
+        }
     }
 }
