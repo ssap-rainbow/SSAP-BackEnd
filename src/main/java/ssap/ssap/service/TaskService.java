@@ -78,6 +78,7 @@ public class TaskService {
         task.setJibunAddress(createForm.getJibunAddress());
         task.setDetailedAddress(createForm.getDetailedAddress());
         task.setPreferredGender(createForm.getPreferredGender());
+        log.debug("심부름 즉시 수행 여부: {}", createForm.getImmediateExecutionStatus());
         if (!createForm.getImmediateExecutionStatus()) {
             task.setStartTime(createForm.getStartTime());
             task.setEndTime(createForm.getEndTime());
