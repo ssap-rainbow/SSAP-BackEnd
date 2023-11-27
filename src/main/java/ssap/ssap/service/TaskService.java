@@ -79,7 +79,7 @@ public class TaskService {
         task.setDetailedAddress(createForm.getDetailedAddress());
         task.setPreferredGender(createForm.getPreferredGender());
         log.debug("심부름 즉시 수행 여부: {}", createForm.getImmediateExecutionStatus());
-        if (!createForm.getImmediateExecutionStatus()) {
+        if (createForm.getImmediateExecutionStatus()) {
             log.debug("심부름 시작 시간: {}", createForm.getStartTime());
             log.debug("심부름 종료 시간: {}", createForm.getEndTime());
             task.setStartTime(createForm.getStartTime());
